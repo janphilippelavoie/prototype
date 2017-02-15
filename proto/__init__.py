@@ -7,5 +7,5 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config
 db = SQLAlchemy(app)
 
-import proto.views
+import proto.resources
 import proto.models
