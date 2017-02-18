@@ -1,5 +1,6 @@
-<p>
-    user list works
-<
-    <li *ngFor="let user of users">{{ user.username }}</li>
-</p>
+<div>
+    <app-user
+        *ngFor="let user of users"
+        [user]="user"
+        ></app-user>
+</div>
