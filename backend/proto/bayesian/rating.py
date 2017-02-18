@@ -2,7 +2,7 @@ import glicko2
 import math
 
 
-class Glicko:
+class Glicko(object):
     """ Struct like structure representing a glicko2 rating.
     """
 
@@ -23,18 +23,11 @@ class Glicko:
         self.vol = vol
 
     def __str__(self):
-        out_str = "(rating : %(rating)f, rd : %(rd)f, vol : %(vol)f)" \
-                  % {'rating': self.rating, 'rd': self.rd, 'vol': self.vol}
-        return out_str
-
-    @property
-    def __repr__(self):
-        out_str = "Glicko(rating=%(rating)f, rd=%(rd)f, vol=%(vol)f)" \
-                  % {'rating': self.rating, 'rd': self.rd, 'vol': self.vol}
+        out_str = "(rating : {}, rd : {}, vol : {})".format(self.rating, self.rd, self.vol)
         return out_str
 
 
-def post_ratings(g_1, g_2, score_1):
+def get_posterior_ratings(g_1, g_2, score_1):
     """Return posterior ratings.
 
     Parameters
@@ -77,10 +70,12 @@ def expected_score(g_1, g_2):
     r_1 = g_1.rating
     r_2 = g_2.rating
 
-    return 1.0 / (1.0 + 10.0 ** (-g_function(math.sqrt(rd_1 ** 2 + rd_2 ** 2)) * (r_1 - r_2) / 400.0))
+    e_s = 1.0 / (1.0 + 10.0 ** (-g_function(math.sqrt(rd_1 ** 2 + rd_2 ** 2)) * (r_1 - r_2) / 400.0))
+
+    return e_s
 
 
-def g_function( rd ):
+def g_function(rd):
     """ Part of the glicko algorithm
 
     :param rd: float
@@ -89,4 +84,5 @@ def g_function( rd ):
     See www.glicko.net for details.
     """
     q = math.log(10) / 400
-    return 1.0 / math.sqrt(1.0 + 3.0 * q ** 2 * rd ** 2 / math.pi ** 2)
+    g_of_rd = 1.0 / math.sqrt(1.0 + 3.0 * q ** 2 * rd ** 2 / math.pi ** 2)
+    return g_of_rd
