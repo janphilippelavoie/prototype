@@ -21,6 +21,7 @@ class UserListAPI(Resource):
         self._reqparse.add_argument('email', required=True)
         super(UserListAPI, self).__init__()
 
+    @jwt_required()
     @marshal_with(user_fields)
     def get(self):
         return User.query.all()
@@ -49,7 +50,7 @@ app.config['SECRET_KEY'] = 'super-secret'
 
 
 def authenticate(username, password):
-    user = User.query.filter(User.username == username).first()
+    user = User.query.filter(User.email == username).first()
     if user and user.password == password:
         return user
 
