@@ -27,6 +27,38 @@ class Glicko(object):
         return out_str
 
 
+class Learner(object):
+
+    def __init__(self, id, skills):
+        """
+        :param id: int
+        :param skills: dict
+
+        The skills dict expected is of the form {id_1 : glicko_1, id_2 : glicko_2, ...}.
+        """
+        self.id = id
+        self.skills = skills
+
+class Problem(object):
+
+    def __init__(self, id, skills_required):
+        """
+
+        :param id: int
+        :param skills_required: dict
+
+        The skills_required dict expected is of the form {id_1 : glicko_1, id_2 : glicko_2, ...}.
+        """
+        self.id = id
+        self.skills_required = skills_required
+
+class SkillMissingError(Exception):
+    """ Used when a problem has a skill that the learner don't in expected_success_rate
+    """
+    def __init__(self, message):
+        self.message = message
+
+
 def get_posterior_ratings(g_1, g_2, score_1):
     """Return posterior ratings.
 
@@ -86,3 +118,42 @@ def g_function(rd):
     q = math.log(10) / 400
     g_of_rd = 1.0 / math.sqrt(1.0 + 3.0 * q ** 2 * rd ** 2 / math.pi ** 2)
     return g_of_rd
+
+def expected_success_rate(learner, problem):
+    """ Return expected success rate of a Learner against a Problem.
+
+    :param learner: Learner
+    :param problem: Problem
+    :return: float
+    """
+    success_rate = 1.0
+    for id in iter(problem.skills_required):
+        try:
+            learner_skill_glicko = learner.skills[id]
+            problem_skill_required_glicko = problem.skills_required[id]
+            e_s = expected_score(learner_skill_glicko, problem_skill_required_glicko)
+            success_rate *= e_s
+        except KeyError:
+            raise SkillMissingError("Skill {} not found in learner skills dictionary".format(id))
+        except:
+            raise
+    return success_rate
+
+def get_best_problem_id(learner, problems_list, target_success_rate):
+    """
+
+    :param learner: Learner
+    :param problems_list: List of Problems
+    :param target_success_rate: float [0,1]
+    :return: int
+    """
+    smalest_target_distance = 1.1
+    best_problem_id = None
+    for problem in problems_list:
+        success_rate = expected_success_rate(learner, problem)
+        target_distance = abs(target_success_rate-success_rate)
+        if target_distance < smalest_target_distance:
+            best_problem_id = problem.id
+            smalest_target_distance = target_distance
+    return best_problem_id
+
