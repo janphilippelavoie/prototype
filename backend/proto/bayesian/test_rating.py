@@ -66,5 +66,49 @@ class TestGFunction(unittest.TestCase):
         g_ex = rating.g_function(350)
         self.assertAlmostEqual(g_ex, g_th)
 
+
+class TestExpectedSuccessRate(unittest.TestCase):
+    def test_one_skill_problem_fair_match(self):
+        problem = rating.Problem(1, {1: rating.Glicko()})
+        learner = rating.Learner(1, {1: rating.Glicko()})
+        self.assertEqual(rating.expected_success_rate(learner, problem), 0.5)
+
+    def test_two_skills_problem_fair_match(self):
+        problem = rating.Problem(1, {1: rating.Glicko(), 2: rating.Glicko()})
+        learner = rating.Learner(1, {1: rating.Glicko(), 2: rating.Glicko()})
+        self.assertEqual(rating.expected_success_rate(learner, problem), 0.25)
+
+    def test_one_skill_problem_unfair_match(self):
+        problem = rating.Problem(1, {1: rating.Glicko(1500.0, 150.0)})
+        learner = rating.Learner(1, {1: rating.Glicko(1400.0, 80.0)})
+        self.assertAlmostEqual(rating.expected_success_rate(learner, problem), 0.376, 3)
+
+    def test_missing_skill_error(self):
+        problem = rating.Problem(1, {1: rating.Glicko()})
+        learner = rating.Learner(1, {2: rating.Glicko()})
+        self.assertRaises(rating.SkillMissingError, rating.expected_success_rate, learner, problem)
+
+
+class TestGetBestProblemId(unittest.TestCase):
+    def testOneCandidateOneChoice(self):
+        learner = rating.Learner(0, {1: rating.Glicko()})
+        problems_list = [rating.Problem(42, {1: rating.Glicko()})]
+        self.assertEqual(rating.get_best_problem_id(learner, problems_list, 0.8), 42)
+
+    def testNearestCandidateCase1(self):
+        learner = rating.Learner(0, {1: rating.Glicko(1500.0)})
+        problems_list = [rating.Problem(42, {1: rating.Glicko(1600)}), rating.Problem(2, {1: rating.Glicko(1300)})]
+        self.assertEqual(rating.get_best_problem_id(learner, problems_list, 0.5), 42)
+
+    def testNearestCandidateCase2(self):
+        learner = rating.Learner(0, {1: rating.Glicko(1400.0)})
+        problems_list = [rating.Problem(13, {1: rating.Glicko(1600)}), rating.Problem(42, {1: rating.Glicko(1300)})]
+        self.assertEqual(rating.get_best_problem_id(learner, problems_list, 0.5), 42)
+
+    def testNearestCandidateCase3(self):
+        learner = rating.Learner(0, {1: rating.Glicko(1500.0)})
+        problems_list = [rating.Problem(13, {1: rating.Glicko(1600)}), rating.Problem(42, {1: rating.Glicko(1300)})]
+        self.assertEqual(rating.get_best_problem_id(learner, problems_list, 0.95), 42)
+
 if __name__ == '__main__':
     unittest.main()
