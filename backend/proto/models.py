@@ -1,16 +1,14 @@
-import proto
+from proto import db
 
 
-class User(proto.db.Model):
-    id = proto.db.Column(proto.db.Integer, primary_key=True)
-    username = proto.db.Column(proto.db.String(80), unique=True)
-    email = proto.db.Column(proto.db.String(120), unique=True)
-    password = proto.db.Column(proto.db.String(80), unique=False)
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(), unique=True)
+    password = db.Column(db.String(), unique=False)
 
-    def __init__(self, username, password, email):
-        self.username = username
+    def __init__(self, email, password):
+        self.email = email.lower()
         self.password = password
-        self.email = email
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.email
