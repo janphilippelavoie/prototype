@@ -18,7 +18,6 @@ export class UserListComponent implements OnInit {
   users: User[]
 
   constructor(private userService: UserService) {
-    this.getUsers();
   }
 
   getUsers() {
@@ -30,6 +29,7 @@ export class UserListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getUsers();
   }
 
 }
