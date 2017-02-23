@@ -36,7 +36,6 @@ class UserListAPI(Resource):
 
 
 class UserAPI(Resource):
-    @jwt_required()
     @marshal_with(user_fields)
     def get(self, user_id):
         return User.query.get(user_id)
@@ -49,8 +48,8 @@ api.add_resource(UserAPI, '/users/<int:user_id>', endpoint='user')
 app.config['SECRET_KEY'] = 'super-secret'
 
 
-def authenticate(username, password):
-    user = User.query.filter(User.email == username).first()
+def authenticate(email, password):
+    user = User.query.filter(User.email == email).first()
     if user and user.password == password:
         return user
 
