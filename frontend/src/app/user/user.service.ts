@@ -1,16 +1,17 @@
 import { User } from '../user/user.model';
 import { Injectable }              from '@angular/core';
-import { Http, Response }          from '@angular/http';
+import { Response }          from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { AuthHttp } from 'angular2-jwt'
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
 @Injectable()
 export class UserService {
-  
+
   private usersUrl = 'http://localhost:5000/users';  // URL to web API
-  
-  constructor (private http: Http) {}
+
+  constructor (public http: AuthHttp) {}
 
   getUsers(): Observable<User[]> {
     return this.http.get(this.usersUrl)

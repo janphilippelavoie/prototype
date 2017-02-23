@@ -10,8 +10,10 @@ import { UserComponent } from './user/user.component';
 import { LoginComponent } from './login/login.component'
 
 
-export function authHttpServiceFactory(http: Http, options: RequestOptions) {
-  return new AuthHttp( new AuthConfig({}), http, options);
+export function authHttpServiceFactory(http: Http) {
+  return new AuthHttp( new AuthConfig({
+    headerPrefix: 'JWT'
+  }), http);
 }
 
 @NgModule({
