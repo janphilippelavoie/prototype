@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
   private messages: String[] = [];
 
   private APP_SERVER: String = "http://localhost:5000/";
-  private username: String = "jp@example";
+  private username: String = "jp@example.com";
   private password: String = "password";
 
   public loginForm: FormGroup = this.formBuilder.group({
