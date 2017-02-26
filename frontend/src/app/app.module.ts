@@ -8,6 +8,8 @@ import { AppComponent } from './app.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { UserComponent } from './user/user.component';
 import { LoginComponent } from './login/login.component'
+import {RouterModule} from "@angular/router";
+import {appRoutes} from "./app.routes";
 
 
 export function authHttpServiceFactory(http: Http) {
@@ -27,7 +29,8 @@ export function authHttpServiceFactory(http: Http) {
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpModule
+    HttpModule,
+    RouterModule.forRoot(appRoutes)
   ],
   providers: [
     {
